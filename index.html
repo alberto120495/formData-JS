@@ -4,9 +4,81 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="css/style.css" />
     <title>Form Data</title>
-    <script src="js/main.js" defer></script>
+    <style>
+      :root {
+        --shadowColor: hsla(0, 0%, 0%, 0.08);
+      }
+
+      body {
+        background-color: #f0f3f7;
+        color: rgba(0, 0, 0, 0.6);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+
+      form {
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+        width: 400px;
+        margin: 0 auto;
+        padding: 2em 1.5em;
+        background-color: white;
+      }
+
+      label {
+        text-align: center;
+        display: block;
+        padding-bottom: 1em;
+        margin-bottom: 1em;
+        font-size: 1.2em;
+        font-weight: bold;
+        box-shadow: 0 3px 2px -2px var(--shadowColor);
+      }
+      input {
+        width: 100%;
+        border-radius: 5px;
+        box-shadow: inset 0 2px 4px 0 var(--shadowColor);
+        font-size: 14px;
+        padding: 0.8em 1em;
+        box-sizing: border-box;
+        border: 1px solid var(--shadowColor);
+        margin-bottom: 1em;
+        outline: 0;
+      }
+
+      input:focus {
+        box-shadow: 0 0 10px 0 rgba(255, 255, 255, 0.5);
+      }
+
+      button {
+        color: white;
+        background-color: #38b765;
+        border: none;
+        width: 100%;
+        padding: 0.8em 1em;
+        border-radius: 5px;
+        font-size: 1em;
+      }
+
+      .preview {
+        position: relative;
+      }
+
+      .preview img {
+        max-width: 100%;
+      }
+
+      .preview p {
+        position: absolute;
+        background-color: white;
+        left: 5px;
+        top: 5px;
+      }
+    </style>
   </head>
   <body>
     <form id="form">
@@ -19,5 +91,37 @@
       </div>
       <button>Enviar</button>
     </form>
+    <script>
+      const $formulario = document.querySelector("#form");
+      const $username = document.querySelector("#username");
+      const $image = document.querySelector("#image");
+      const $file = document.querySelector("#file");
+
+      $file.addEventListener("change", () => {
+        const formData = new FormData($formulario); //FormData(e.currentTarget)
+        renderImage(formData);
+        renderUsername(formData);
+      });
+
+      const renderImage = (formData) => {
+        const file = formData.get("image");
+        const image = URL.createObjectURL(file);
+        $image.setAttribute("src", image);
+      };
+
+      const renderUsername = (formData) => {
+        const username = formData.get("username");
+        $username.textContent = username;
+      };
+
+      $formulario.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const formData = new FormData($formulario); //FormData(e.currentTarget)
+        fetch("/", {
+          method: "POST",
+          body: formData,
+        });
+      });
+    </script>
   </body>
 </html>
